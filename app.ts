@@ -3,17 +3,15 @@ const request = require("request");
 const rcon = require("./rcon/app.js");
 const SourceQuery = require("sourcequery");
 const fs = require("fs");
-
-const configdir = "./config";
+const configdir:string = "config/server1.json";
 const maxServers = 50;
-var players_dc = "";
-var maxplayers_dc = "";
-var currentmap_dc = "";
-var dc_seedinState = "";
-var EventAnnouncement_dc = "";
-var serverStatus = "";
-var refresh = false;
-var dc_message = "";
+let players_dc = "";
+let maxplayers_dc = "";
+let currentmap_dc = "";
+let dc_seedinState = "";
+let EventAnnouncement_dc = "";
+let serverStatus:boolean;
+let dc_message = "";
 
 // Create dir if not exist
 if (!fs.existsSync(configdir)) {
@@ -21,18 +19,20 @@ if (!fs.existsSync(configdir)) {
 }
 
 // Create config file if not exist
-fs.readdir(configdir, (err, files) => {
+fs.readdir(configdir, (err:any, files:any) => {
   try {
     if (files.length < 1)
       var writeConfig =
         '{"debug":false,"token":"","apiSite":4,"apiUrl":"https://full uri here","serverIp":"","serverPort":"28015","enableRcon":"0","rconhost":"","rconport":"","rconpass":"","prefix":"!","roles":["Administrator","admins"],"queueMessage":"currently waiting in queue.","updateInterval":"3"}';
-    var jsonData = JSON.parse(writeConfig);
+
+    var jsonData: any;
+    jsonData = JSON.parse(writeConfig);//do not know why it doesnt accept it
 
     fs.writeFile(
       "config/server1.json",
       JSON.stringify(jsonData, null, 2),
       "utf8",
-      function (err) {
+      function (err: any) {
         if (err) {
           console.log("An error occured while writing JSON Object to File.");
           return console.log(err);
@@ -43,7 +43,7 @@ fs.readdir(configdir, (err, files) => {
   } catch (error) { }
 });
 
-fs.readdir(configdir, (err, files) => {
+fs.readdir(configdir, (err: any, files: string | any[]) => {
   for (var i = 1; i <= files.length; i++) {
     if (i > maxServers) {
       console.log("Max servers is over " + maxServers);
@@ -52,7 +52,7 @@ fs.readdir(configdir, (err, files) => {
     }
 
     // Functions
-    function updateActivity() {
+    const updateActivity = () => {
 
       if (apiSite === 3) {
         require("tls").DEFAULT_ECDH_CURVE = "auto";
@@ -62,7 +62,7 @@ fs.readdir(configdir, (err, files) => {
             headers: { json: true, Referer: "discord-rustserverstatus" },
             timeout: 10000
           },
-          function (err, res, body) {
+          function (err: any, res: { statusCode: number; }, body: string) {
             if (!err && res.statusCode == 200) {
               const jsonData = JSON.parse(body);
               const server = jsonData.data.attributes;
@@ -118,7 +118,7 @@ fs.readdir(configdir, (err, files) => {
           const sq = new SourceQuery(1000); // 1000ms timeout
           sq.open(serverIp, serverPort);
 
-          sq.getInfo(function (err, info) {
+          sq.getInfo(function (err: any, info: { players: any; maxplayers: any; }) {
             if (err) {
               return client.user.setActivity("Offline");
             } else {
@@ -131,7 +131,7 @@ fs.readdir(configdir, (err, files) => {
           });
         }
       }
-    }
+    };
     // End Functions
 
     try {
@@ -140,9 +140,7 @@ fs.readdir(configdir, (err, files) => {
     const client = new Discord.Client();
 
     const updateInterval =
-      1000 * 3 ||
-      1000 * process.env.updateInterval ||
-      1000 * config.updateInterval;
+        1000 * config.updateInterval || 1000 * process.env.updateInterval || 1000 * 3;
     const debug = process.env.debug || config.debug;
     const apiUrl = process.env.apiUrl || config.apiUrl;
     const apiSite = process.env.apiSite || config.apiSite;
@@ -179,7 +177,7 @@ fs.readdir(configdir, (err, files) => {
     //   }
     //onClientMessage(message) 
 let hello;
-    client.on("message", message => {
+    client.on("message", (message: { content: string; channel: { send: (arg0: string) => Promise<any>; }; author: { id: any; }; }) => {
       if ((hello=message.content.toLowerCase()) === `${prefix}ilovehawaiipizza`) {
 
         if (serverStatus) {
@@ -211,14 +209,14 @@ let hello;
             msgReact.react('🔄');
             msgReact.react('😍');
 
-            const filter = (reaction, user) => {
+            const filter = (reaction: { emoji: { name: string; }; }, user: { id: any; }) => {
               console.log("MOIN")
               setactivState = false
               return ['🔄', '😍'].includes(reaction.emoji.name) && user.id === message.author.id
             };
 
             msgReact.awaitReactions(filter, { max: 1, time: 60000 })
-              .then(collected => {
+              .then((collected: { first: () => any; }) => {
                 const reaction = collected.first();
                 if (reaction.emoji.name === '🔄') {
                   console.log("HEY!")
@@ -247,7 +245,7 @@ if(!serverStatus){
 
 
     if (enableRcon == 1) {
-      client.on("message", async message => {
+      client.on("message", async (message: { author: { bot: any; }; content: string; member: { roles: { cache: { name: any; }[]; }; }; reply: (arg0: string) => any; channel: { send: (arg0: string) => void; }; }) => {
         if (message.author.bot) return;
         if (message.content.indexOf(prefix) !== 0) return;
 
@@ -259,7 +257,7 @@ if(!serverStatus){
 
         if (command === "rcon") {
           // Checks for discord permission
-          if (!message.member.roles.cache.some(r => roles.includes(r.name)))
+          if (!message.member.roles.cache.some((r: { name: any; }) => roles.includes(r.name)))
             return message.reply(
               "Sorry, you don't have permissions to use this!"
             );
@@ -267,7 +265,7 @@ if(!serverStatus){
           var getMessage = args.join(" ");
 
           // Rcon message.
-          argumentString = `${getMessage}`;
+          const argumentString = `${getMessage}`;
 
           // Rcon Config
           rconhost = process.env.rconhost || config.rconhost;
@@ -283,17 +281,17 @@ if(!serverStatus){
       });
     } else if (debug) console.log("Rcon mode disabled");
 
-    client.on("guildCreate", guild => {
+    client.on("guildCreate", (guild: { name: any; id: any; memberCount: any; }) => {
       console.log(
         `New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`
       );
     });
 
-    client.on("guildDelete", guild => {
+    client.on("guildDelete", (guild: { name: any; id: any; }) => {
       console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
     });
 
-    client.on("error", function (error) {
+    client.on("error", function (error: any) {
       if (debug) console.log(error);
     });
 

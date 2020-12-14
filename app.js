@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,6 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var _this = this;
 var Discord = require("discord.js");
 var request = require("request");
 var rcon = require("./rcon/app.js");
@@ -47,8 +47,7 @@ var maxplayers_dc = "";
 var currentmap_dc = "";
 var dc_seedinState = "";
 var EventAnnouncement_dc = "";
-var serverStatus = "";
-var refresh = false;
+var serverStatus;
 var dc_message = "";
 // Create dir if not exist
 if (!fs.existsSync(configdir)) {
@@ -78,7 +77,7 @@ fs.readdir(configdir, function (err, files) {
             process.exit();
         }
         // Functions
-        function updateActivity() {
+        var updateActivity = function () {
             if (apiSite === 3) {
                 require("tls").DEFAULT_ECDH_CURVE = "auto";
                 request({
@@ -151,7 +150,7 @@ fs.readdir(configdir, function (err, files) {
                     });
                 }
             }
-        }
+        };
         // End Functions
         try {
             config = require("./config/server" + i + ".json");
@@ -241,8 +240,8 @@ fs.readdir(configdir, function (err, files) {
         });
         //Current Map: ${currentmap_dc} ${EventAnnouncement_dc}`
         if (enableRcon == 1) {
-            client.on("message", function (message) { return __awaiter(void 0, void 0, void 0, function () {
-                var args, command, getMessage;
+            client.on("message", function (message) { return __awaiter(_this, void 0, void 0, function () {
+                var args, command, getMessage, argumentString;
                 return __generator(this, function (_a) {
                     if (message.author.bot)
                         return [2 /*return*/];
@@ -258,7 +257,6 @@ fs.readdir(configdir, function (err, files) {
                         if (!message.member.roles.cache.some(function (r) { return roles.includes(r.name); }))
                             return [2 /*return*/, message.reply("Sorry, you don't have permissions to use this!")];
                         getMessage = args.join(" ");
-                        // Rcon message.
                         argumentString = "" + getMessage;
                         // Rcon Config
                         rconhost = process.env.rconhost || config.rconhost;
