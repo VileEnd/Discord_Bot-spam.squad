@@ -40,7 +40,7 @@ var request = require("request");
 var rcon = require("./rcon/app.js");
 var SourceQuery = require("sourcequery");
 var fs = require("fs");
-var configdir = "./config";
+var configdir = "config/server1.json";
 var maxServers = 50;
 var players_dc = "";
 var maxplayers_dc = "";
@@ -58,7 +58,8 @@ fs.readdir(configdir, function (err, files) {
     try {
         if (files.length < 1)
             var writeConfig = '{"debug":false,"token":"","apiSite":4,"apiUrl":"https://full uri here","serverIp":"","serverPort":"28015","enableRcon":"0","rconhost":"","rconport":"","rconpass":"","prefix":"!","roles":["Administrator","admins"],"queueMessage":"currently waiting in queue.","updateInterval":"3"}';
-        var jsonData = JSON.parse(writeConfig);
+        var jsonData;
+        jsonData = JSON.parse(writeConfig); //do not know why it doesnt accept it
         fs.writeFile("config/server1.json", JSON.stringify(jsonData, null, 2), "utf8", function (err) {
             if (err) {
                 console.log("An error occured while writing JSON Object to File.");
@@ -157,9 +158,7 @@ fs.readdir(configdir, function (err, files) {
         }
         catch (error) { }
         var client = new Discord.Client();
-        var updateInterval = 1000 * 3 ||
-            1000 * process.env.updateInterval ||
-            1000 * config.updateInterval;
+        var updateInterval = 1000 * config.updateInterval || 1000 * process.env.updateInterval || 1000 * 3;
         var debug = process.env.debug || config.debug;
         var apiUrl = process.env.apiUrl || config.apiUrl;
         var apiSite = process.env.apiSite || config.apiSite;

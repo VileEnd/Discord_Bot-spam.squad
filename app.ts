@@ -44,7 +44,7 @@ fs.readdir(configdir, (err:any, files:any) => {
 });
 
 fs.readdir(configdir, (err: any, files: string | any[]) => {
-  for (var i = 1; i <= files.length; i++) {
+  for (let i = 1; i <= files.length; i++) {
     if (i > maxServers) {
       console.log("Max servers is over " + maxServers);
       console.log("Please verify max servers and try again");
@@ -244,42 +244,42 @@ if(!serverStatus){
     //Current Map: ${currentmap_dc} ${EventAnnouncement_dc}`
 
 
-    if (enableRcon == 1) {
-      client.on("message", async (message: { author: { bot: any; }; content: string; member: { roles: { cache: { name: any; }[]; }; }; reply: (arg0: string) => any; channel: { send: (arg0: string) => void; }; }) => {
-        if (message.author.bot) return;
-        if (message.content.indexOf(prefix) !== 0) return;
-
-        var args = message.content
-          .slice(prefix.length)
-          .trim()
-          .split(/ +/g);
-        var command = args.shift().toLowerCase();
-
-        if (command === "rcon") {
-          // Checks for discord permission
-          if (!message.member.roles.cache.some((r: { name: any; }) => roles.includes(r.name)))
-            return message.reply(
-              "Sorry, you don't have permissions to use this!"
-            );
-
-          var getMessage = args.join(" ");
-
-          // Rcon message.
-          const argumentString = `${getMessage}`;
-
-          // Rcon Config
-          rconhost = process.env.rconhost || config.rconhost;
-          rconport = process.env.rconport || config.rconport;
-          rconpass = process.env.rconpass || config.rconpass;
-
-          // Run rcon command.
-          rcon.RconApp(argumentString, rconhost, rconport, rconpass, debug);
-
-          // Send message back to discord that we are trying to relay the command.
-          message.channel.send(`Trying to relay command: ${getMessage}`);
-        }
-      });
-    } else if (debug) console.log("Rcon mode disabled");
+   // if (enableRcon == 1) {
+   //    client.on("message", async (message: { author: { bot: any; }; content: string; member: { roles: { cache: { name: any; }[]; }; }; reply: (arg0: string) => any; channel: { send: (arg0: string) => void; }; }) => {
+   //      if (message.author.bot) return;
+   //      if (message.content.indexOf(prefix) !== 0) return;
+   //
+   //      var args = message.content
+   //        .slice(prefix.length)
+   //        .trim()
+   //        .split(/ +/g);
+   //      var command = args.shift().toLowerCase();
+   //
+   //      if (command === "rcon") {
+   //        // Checks for discord permission
+   //        if (!message.member.roles.cache.some((r: { name: any; }) => roles.includes(r.name)))
+   //          return message.reply(
+   //            "Sorry, you don't have permissions to use this!"
+   //          );
+   //
+   //        var getMessage = args.join(" ");
+   //
+   //        // Rcon message.
+   //        const argumentString = `${getMessage}`;
+   //
+   //        // Rcon Config
+   //        rconhost = process.env.rconhost || config.rconhost;
+   //        rconport = process.env.rconport || config.rconport;
+   //        rconpass = process.env.rconpass || config.rconpass;
+   //
+   //        // Run rcon command.
+   //        rcon.RconApp(argumentString, rconhost, rconport, rconpass, debug);
+   //
+   //        // Send message back to discord that we are trying to relay the command.
+   //        message.channel.send(`Trying to relay command: ${getMessage}`);
+   //      }
+   //    });
+   //  } else if (debug) console.log("Rcon mode disabled");
 
     client.on("guildCreate", (guild: { name: any; id: any; memberCount: any; }) => {
       console.log(
