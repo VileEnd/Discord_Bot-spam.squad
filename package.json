@@ -17,7 +17,7 @@
     "discord.js": "^12.4.0",
     "request": "^2.88.2",
     "sourcequery": "0.0.2",
-    "ws": "^7.3.1"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "nodemon": "^2.0.3",
